@@ -1,0 +1,41 @@
+name: Stock ETL Pipeline
+
+"on":
+  schedule:
+    - cron: "0 21 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+
+    env:
+      ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+      AZURE_SQL_SERVER:      ${{ secrets.AZURE_SQL_SERVER }}
+      AZURE_SQL_DATABASE:    ${{ secrets.AZURE_SQL_DATABASE }}
+      AZURE_SQL_USERNAME:    ${{ secrets.AZURE_SQL_USERNAME }}
+      AZURE_SQL_PASSWORD:    ${{ secrets.AZURE_SQL_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Microsoft ODBC Driver 18
+        run: |
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+          curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list \
+            | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run ETL pipeline
+        working-directory: src
+        run: python main.py
