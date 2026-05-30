@@ -10,6 +10,9 @@
 
 ---
 
+<img width="1434" height="802" alt="image" src="https://github.com/user-attachments/assets/dbaf4789-92de-4c7a-b83c-c2e8ef4f8381" />
+
+
 ## 📌 Project Overview
 
 This project tracks daily price movements and volatility risk across 5 US equities — **AAPL, GOOGL, JNJ, MSFT, NVDA** — using a production-style data pipeline:
